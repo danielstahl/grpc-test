@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.stahl.books.service";
+option java_outer_classname = "BooksProto";
+option objc_class_prefix = "HWP";
+
+package books;
+
+service BooksService {
+    rpc GetBook (BookRequest) returns (BookResponse) {}
+}
+
+service AuthorsService {
+    rpc GetAuthors (AuthorsRequest) returns (AuthorsResponse) {}
+}
+
+message BookRequest {
+    string id = 1;
+}
+
+message BookResponse {
+    Book book = 1;
+}
+
+message AuthorsRequest {
+    repeated string ids = 1;
+}
+
+message AuthorsResponse {
+    repeated Author authors = 1;
+}
+
+message Book {
+    string id = 1;
+    string name = 2;
+    repeated Author authors = 3;
+}
+
+message Author {
+    string id = 1;
+    string name = 2;
+}

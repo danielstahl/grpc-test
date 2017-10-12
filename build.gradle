@@ -1,0 +1,61 @@
+apply plugin: 'java'
+apply plugin: 'com.google.protobuf'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.3'
+    }
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+def grpcVersion = '1.6.1'
+
+dependencies {
+    compile 'com.google.protobuf:protobuf-java:3.4.0'
+    compile 'com.google.api.grpc:proto-google-common-protos:0.1.20'
+    compile "io.grpc:grpc-netty:${grpcVersion}"
+    compile "io.grpc:grpc-protobuf:${grpcVersion}"
+    compile "io.grpc:grpc-stub:${grpcVersion}"
+    compileOnly "io.norberg:auto-matter:0.13.3"
+    compile 'com.google.guava:guava:23.1-jre'
+    compile 'com.spotify:futures-extra:3.0.0'
+
+    testCompile "io.grpc:grpc-testing:${grpcVersion}"
+    testCompile "junit:junit:4.12"
+    testCompile "org.mockito:mockito-core:1.9.5"
+}
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.4.0'
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}
+
+apply plugin: 'idea';
+
+idea {
+    module {
+        // Not using generatedSourceDirs because of
+        // https://discuss.gradle.org/t/support-for-intellij-2016/15294/8
+        sourceDirs += file("${projectDir}/build/generated/source/proto/main/java");
+        sourceDirs += file("${projectDir}/build/generated/source/proto/main/grpc");
+        sourceDirs += file("${projectDir}/build/classes/java/main");
+    }
+}
